@@ -70,9 +70,6 @@ diabetes %>% map(~sum(is.na(.)))
  sum(duplicated(diabetes))
 ```
 
-```{}
-```
-
 Since We cannot have Bps, BMI, Skin Thickness and Glucose being zero(0) all zero values were replaced with the mean/median since dropping them would change the data.
 
 ```{r echo=FALSE}
@@ -190,7 +187,7 @@ ggplot(diabetes, aes(Pregnancies,fill= "blue"))+
 
 Those who had higher number of pregnancies had a higher chance of being diabetic.
 
-```{r}
+```{r echo=FALSE}
 ggplot(diabetes, aes(Pregnancies, Outcome))+
 geom_boxplot() +
 labs(
@@ -281,7 +278,7 @@ ggplot(diabetes, aes(BMI_cat, y = DiabetesPedigreeFunction)) +
 
 Those with Glucose above 125 classified as hypergylcemia accounted for 40.49 %, Impaired glucose had 34.5% while the hypoglycemia accounted for 1%
 
-```{r}
+```{r echo=FALSE}
 diabetes <- diabetes %>%
   mutate(
     glucose_range = case_when(
@@ -342,7 +339,7 @@ ggplot(diabetes, aes(glucose_range, y = DiabetesPedigreeFunction)) +
 
 The patient with hyperglycemia or high glucose 2 hours after Oral glucose test had a higher chance of having diabetes as their outcome. Compared to the hypoglycemic who none had diabetes as the outcome.
 
-```{r}
+```{r echo=FALSE}
 ggplot(diabetes, aes(x = glucose_range, fill = Outcome)) +
    geom_bar() +
    labs(
@@ -381,7 +378,7 @@ ggplot(diabetes, aes(x = glucose_range, fill = Outcome)) +
  )
 ```
 
-```{r}
+```{r echo=FALSE}
 diabetes$Outcome <- factor(diabetes$Outcome, levels = c(1, 0), labels = c("Yes", "No"))
 
 ggplot(diabetes, aes(x = Outcome, fill = Outcome)) +
@@ -402,7 +399,7 @@ ggplot(diabetes, aes(x = Outcome, fill = Outcome)) +
 
 ## comparison of age and outcome
 
-```{r}
+```{r echo=FALSE}
  ggplot(diabetes, aes(x = age_cat, fill = Outcome)) +
    geom_bar() +
    labs(
@@ -418,3 +415,76 @@ scale_fill_manual(values = c("Yes" = "blue", "No" = "red")) +
     axis.text.x = element_text(angle = 0, hjust = 0.5)  # Adjust x-axis label alignment
   )
 ```
+
+### Blood Pressure comparison
+
+The study utilized Diastolic blood pressures that ranges from 60 - 80 mmHg. The BPs had a normal distribution though 11.2 % had low diastolic BP(less than 60mmHg). 62 % had normal BPs and 0.13% or 1 person had a Hypertensive crises BP \> 120 .
+
+```{r echo=FALSE}
+ ggplot(diabetes, aes(x = BloodPressure, fill = "blue")) +
+   geom_histogram(bins  = 30) +
+   labs(
+     title = "Diastolic Bps",
+     x = " ",
+     y = ""
+   ) +
+  scale_fill_manual(values = c("blue" = "blue"))+
+   theme(
+    panel.grid.major = element_blank(),  # Hide major grid lines
+    panel.grid.minor = element_blank(),  # Hide minor grid lines
+    axis.text.x = element_text(angle = 0, hjust = 0.5)  # Adjust x-axis label alignment
+  )
+
+```
+
+```{r echo=FALSE}
+diabetes <- diabetes %>%
+  mutate(
+    bp_range = case_when(
+      BloodPressure < 60 ~ 'Hypotensive',
+      BloodPressure>= 60 & BloodPressure< 80 ~ 'Normal',
+      BloodPressure >= 80 & BloodPressure < 90 ~ 'Stage one',
+       BloodPressure >= 90 & BloodPressure < 120 ~ 'Stage 2',
+      BloodPressure > 120 ~ 'Crisis',
+      TRUE ~ 'Unknown'  # Default category for other cases
+    )
+  )
+ggplot(diabetes, aes(bp_range))+
+  geom_bar(fill = "blue") +
+ labs(
+     title = "Diastolic Bps Categories",
+     x = " ",
+     y = ""
+   ) +
+  
+   theme(
+    panel.grid.major = element_blank(),  # Hide major grid lines
+    panel.grid.minor = element_blank(),  # Hide minor grid lines
+    axis.text.x = element_text(angle = 0, hjust = 0.5)  # Adjust x-axis label alignment
+  )
+```
+
+Diastolic blood pressure did not have such high impact on the outcome for diabetes.
+
+```{r echo=FALSE}
+ ggplot(diabetes, aes(x = bp_range, fill = Outcome)) +
+   geom_bar() +
+   labs(
+     title = "BP range vs. Outcome",
+     x = " ",
+     y = ""
+   ) +
+scale_fill_manual(values = c("Yes" = "blue", "No" = "red")) +  
+   theme_minimal()+
+   theme(
+    panel.grid.major = element_blank(),  # Hide major grid lines
+    panel.grid.minor = element_blank(),  # Hide minor grid lines
+    axis.text.x = element_text(angle = 0, hjust = 0.5)  # Adjust x-axis label alignment
+  )
+```
+
+## Recommendation
+
+Since more than 60% of the population were obese education and lifestyle modification measures should introduced to the community.
+
+More screening measures should be introduced.
