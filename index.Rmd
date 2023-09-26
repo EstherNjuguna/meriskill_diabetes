@@ -487,4 +487,4 @@ scale_fill_manual(values = c("Yes" = "blue", "No" = "red")) +
 
 Since more than 60% of the population were obese education and lifestyle modification measures should introduced to the community.
 
-More screening measures should be introduced.
+More screening measures should be introduced. Gym services and also healthy eating should be adopted.
