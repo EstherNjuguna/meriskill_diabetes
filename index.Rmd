@@ -52,13 +52,17 @@ The data was imported into R and run head to visualize the first 6 rows
    summary(diabetes)
 ```
 
-Also looked at the dimensions of the data
+Also looked at the dimensions of the data. The dataset had 768 rows and 9 columns
 
 ```{r}
 dim(diabetes)
 ```
 
-Looking if we had any null values in the data or any duplicated values
+```{r}
+colnames(diabetes)
+```
+
+Looking if we had any null values in the data or any duplicated values. No null values were present.
 
 ```{r echo=FALSE}
 diabetes %>% map(~sum(is.na(.)))
@@ -66,7 +70,10 @@ diabetes %>% map(~sum(is.na(.)))
  sum(duplicated(diabetes))
 ```
 
-Since We cannot have Bps, BMI, Skin Thickness and Glucose being zero(0) all zero values were replaced with the mean since dropping them would change the data.
+```{}
+```
+
+Since We cannot have Bps, BMI, Skin Thickness and Glucose being zero(0) all zero values were replaced with the mean/median since dropping them would change the data.
 
 ```{r echo=FALSE}
 
@@ -84,6 +91,9 @@ diabetes <- diabetes %>%
 # Replace 0 skin Thickness
 diabetes <- diabetes %>%
   mutate(SkinThickness = replace(SkinThickness, SkinThickness == 0, mean(SkinThickness, na.rm = TRUE)))
+# Insulin
+diabetes <- diabetes %>%
+  mutate(Insulin = replace(Insulin, Insulin == 0, median(Insulin, na.rm = TRUE)))
 # Age Categorization
  diabetes <- diabetes %>%
    mutate(
@@ -106,6 +116,17 @@ diabetes <- diabetes %>%
 
 ## Insights
 
+### How was the population spread?
+
+| age_cat  | Percent |     |     |     |
+|:---------|--------:|-----|-----|-----|
+| Below_30 |   51.56 |     |     |     |
+| 30s      |   21.48 |     |     |     |
+| 40s      |   15.36 |     |     |     |
+| 50s      |    7.42 |     |     |     |
+| 60s      |    3.78 |     |     |     |
+| Above_70 |    0.39 |     |     |     |
+
 ```{r , echo = FALSE}
  ## categorize age vs the outcome
 
@@ -125,15 +146,29 @@ diabetes <- diabetes %>%
   )
 ```
 
-```{r}
+```{r eval=FALSE, include=FALSE}
 grouped_ages <- diabetes %>%
   group_by(age_cat) %>%
-  summarize(count = n()) %>%
-  arrange(desc(count)) 
+  summarize(Percent = n() / nrow(diabetes) * 100) %>%
+  mutate(Percent = round(Percent, 2)) %>%
+  arrange(desc(Percent))
+
 grouped_ages
+
 ```
 
 ### Number of Pregnancies
+
+The mean number of pregnancies was around 3 with the data being skewed to the left. A few extremes having above 11 pregnancies accounting for 4.43%
+
+```{r eval=FALSE, include=FALSE}
+number <- diabetes %>%
+  filter(Pregnancies > 10)%>%
+  summarize(Percent = n() / nrow(diabetes) * 100) %>%
+  mutate(Percent = round(Percent, 2)) %>%
+  arrange(desc(Percent))
+number
+```
 
 ```{r echo=FALSE}
 ggplot(diabetes, aes(Pregnancies,fill= "blue"))+
@@ -151,9 +186,29 @@ ggplot(diabetes, aes(Pregnancies,fill= "blue"))+
   )
 ```
 
-### Comparison of BMI and outcome
+### Comparison of pregnancies and outcome
+
+Those who had higher number of pregnancies had a higher chance of being diabetic.
 
 ```{r}
+ggplot(diabetes, aes(Pregnancies, Outcome))+
+geom_boxplot() +
+labs(
+    title = "Comparison of pregnancies and outcome",
+    x = "",
+    y = ""
+  ) 
+
+```
+
+```{undefined eval=FALSE, include=FALSE}
+```
+
+### BMI numbers
+
+About 61.98 % of the population had a BMI of above 30 which is considered as being obese. 1.04% had a BMI of above 50 which even though possible could be an outlier. 0.52% percent of the population were underweight with a BMI \< 18.5
+
+```{r echo=FALSE}
 diabetes <- diabetes %>%
   mutate(
     BMI_cat = case_when(
@@ -173,28 +228,37 @@ diabetes <- diabetes %>%
 # View the resulting dataset
 grouped_counts <- diabetes %>%
   group_by(BMI_cat) %>%
-  summarize(count = n()) %>%
-  arrange(desc(count)) 
+   summarize(Percent = n() ) %>%
+  arrange(desc(Percent))
 grouped_counts
 ```
 
-```{r echo=FALSE}
-ggplot(diabetes, aes(BMI_cat, y = Glucose)) +
-  geom_bar(stat = "summary", fun = "mean",fill = "blue") +
-  labs(
-    title = "Bar Plot of Mean Glucose by BMI Category",
-    x = "",
-    y = ""
-  ) +
-  theme_minimal()+
-  theme(
-    panel.grid.major = element_blank(),  # Hide major grid lines
-    panel.grid.minor = element_blank(),  # Hide minor grid lines
-    axis.text.x = element_text(angle = 0, hjust = 0.5)  # Adjust x-axis label alignment
-  )
+```{r eval=FALSE, include=FALSE}
+number <- diabetes %>%
+  filter(BMI > 50) %>%
+
+  summarize(Percent = n() / nrow(diabetes) * 100) %>%
+  mutate(Percent = round(Percent, 2)) %>%
+  arrange(desc(Percent))
+number
 ```
 
-### Diabtes edigree Function and Age
+```{r echo=FALSE}
+ggplot(diabetes, aes(BMI)) +
+  geom_histogram(binwidth = 2) +
+  labs(
+    title = "Histogram of Outcome by BMI",
+    x = " ",
+    y = ""
+  ) +
+  facet_wrap(~Outcome)
+
+
+```
+
+### Diabetes pedigree Function and BMI
+
+The super Obese, Severe Obese and very severe obese had the highest diabetes pedigree function. This in itself is not a good measure since even the underweight still have a high DPF
 
 ```{r echo=FALSE}
 ggplot(diabetes, aes(BMI_cat, y = DiabetesPedigreeFunction)) +
@@ -211,6 +275,88 @@ ggplot(diabetes, aes(BMI_cat, y = DiabetesPedigreeFunction)) +
     axis.text.x = element_text(angle = 0, hjust = 0.5)  # Adjust x-axis label alignment
   )
 
+```
+
+### Glucose ranges
+
+Those with Glucose above 125 classified as hypergylcemia accounted for 40.49 %, Impaired glucose had 34.5% while the hypoglycemia accounted for 1%
+
+```{r}
+diabetes <- diabetes %>%
+  mutate(
+    glucose_range = case_when(
+      Glucose <70 ~ 'Hypoglycemia',
+      Glucose >= 70 & Glucose < 100 ~ 'Normal',
+      Glucose >= 100 & Glucose < 125 ~ 'Impaired Glucose',
+      Glucose >= 125 ~ 'Hypergylcemia',
+      TRUE ~ 'Unknown'  # Default category for other cases
+    )
+
+  )
+ ggplot(diabetes, aes(x = glucose_range)) +
+   geom_bar(fill = "blue") +
+   labs(
+     title = "Glucose Ranges",
+     x = " ",
+     y = ""
+   ) +
+  
+   theme_minimal()+
+   theme(
+    panel.grid.major = element_blank(),  # Hide major grid lines
+    panel.grid.minor = element_blank(),  # Hide minor grid lines
+    axis.text.x = element_text(angle = 0, hjust = 0.5)  # Adjust x-axis label alignment
+  )
+ 
+```
+
+```{r eval=FALSE, include=FALSE}
+sugars <- diabetes %>%
+  group_by(glucose_range) %>%
+  summarize(Percent = n()/ nrow(diabetes) * 100) %>%
+  arrange(desc(Percent)) 
+sugars
+
+```
+
+### Glucose Ranges and Diabetes Pedigree Function
+
+Both the hyperglycemia and impaired glucose had the highest diabetes pedigree function.
+
+```{r echo=FALSE}
+ggplot(diabetes, aes(glucose_range, y = DiabetesPedigreeFunction)) +
+  geom_bar(stat = "summary", fun = "mean",fill = "blue") +
+  labs(
+    title = "Bar Plot of DPF by Glucose Ranges",
+    x = "",
+    y = ""
+  ) +
+  theme_minimal()+
+  theme(
+    panel.grid.major = element_blank(),  # Hide major grid lines
+    panel.grid.minor = element_blank(),  # Hide minor grid lines
+    axis.text.x = element_text(angle = 0, hjust = 0.5)  # Adjust x-axis label alignment
+  )
+
+```
+
+The patient with hyperglycemia or high glucose 2 hours after Oral glucose test had a higher chance of having diabetes as their outcome. Compared to the hypoglycemic who none had diabetes as the outcome.
+
+```{r}
+ggplot(diabetes, aes(x = glucose_range, fill = Outcome)) +
+   geom_bar() +
+   labs(
+     title = "Glucose Range vs. Outcome",
+     x = " ",
+     y = " "
+   ) +
+  scale_fill_manual(values = c("Yes" = "blue", "No" = "red")) +  
+   theme_minimal()+
+   theme(
+    panel.grid.major = element_blank(),  # Hide major grid lines
+    panel.grid.minor = element_blank(),  # Hide minor grid lines
+    axis.text.x = element_text(angle = 0, hjust = 0.5)  # Adjust x-axis label alignment
+  )
 ```
 
 ### How do the various paramaters relate to each other
