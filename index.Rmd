@@ -483,9 +483,69 @@ scale_fill_manual(values = c("Yes" = "blue", "No" = "red")) +
   )
 ```
 
+## Prediction Analysis
+
+We aim to investigate the relationship between several medical predictor variables and a binary outcome variable, "Outcome." The dataset contains information related to pregnancies, BMI, insulin levels, age, blood pressure, glucose levels, and the binary outcome variable, which takes on values 1 (indicating "Yes") and 2 (indicating "No"). The aim of this analysis is to understand how these predictor variables influence the outcome.
+
+### Summary Statistics
+
+The dataSet has 768 observations with the following variables: "Outcome" (Response Variable), Predictor Variables:("Pregnancies", "BMI" (Body Mass Index), "Insulin", "Age", "BloodPressure", "Glucose", "DiabetesPedigreeFunction").
+
+A regression model was used to predict the outcome variable using the others as predictor variables.
+
+```{r}
+diabetes$Outcome <- as.numeric(diabetes$Outcome)
+model <- lm(formula = Outcome ~ Pregnancies + BMI + Insulin + Age + BloodPressure + Glucose + DiabetesPedigreeFunction, data = diabetes)
+
+# Summary of the linear regression model
+summary(model)
+```
+
+### Coefficients
+
+The coefficients obtained from the linear regression analysis are as follows:
+
+    Intercept (Intercept): The intercept of the model is approximately 3.0253. This represents the expected value of the "Outcome" variable when all predictor variables are zero.
+
+    Pregnancies: For each one-unit increase in the number of pregnancies, the "Outcome" variable is expected to decrease by approximately -0.0204, holding all other predictors constant.
+
+    BMI: For each one-unit increase in BMI, the "Outcome" variable is expected to decrease by approximately -0.01496, holding all other predictors constant.
+
+    Insulin: The coefficient for Insulin is approximately 0.0002, but it is not statistically significant (p-value > 0.05). This suggests that Insulin may not have a significant impact on the "Outcome" variable in this model.
+
+    Age: Similarly, Age has a coefficient of approximately -0.002, but it is not statistically significant.
+
+    BloodPressure: BloodPressure has a coefficient of approximately 0.00152, but it is also not statistically significant.
+
+    Glucose: For each one-unit increase in Glucose, the "Outcome" variable is expected to decrease by approximately -0.0067, holding all other predictors constant.
+    DiabetesPedigreeFunction: The coefficient is - 0.1368
+
+### Statistical Significance
+
+The predictor variables 'Pregnancies,' 'BMI,' 'DiabetesPedigreeFunction' and 'Glucose' are
+statistically significant (p \< 0.05), indicating that they have a
+significant impact on the 'Outcome' variable.
+
+On the other hand, 'Insulin,' 'Age,' and 'BloodPressure' are not statistically significant (p \> 0.05) in this model.
+
+The F-statistic is 58.27 with a p-value close to zero, indicating that the model as a whole is statistically significant.
+
+### Model Fit
+
+The R-squared value of approximately 0.3171 suggests that about 31.71%
+of the variance in the 'Outcome' variable is explained by the predictor
+variables.
+
+## Conclusion
+
+In summary, this linear regression analysis suggests that several predictor variables, including "Pregnancies," "BMI," "DiabetesPedigreeFunction" and "Glucose," are statistically significant in predicting the "Outcome" variable. These variables have been found to have a significant impact on the likelihood of a positive outcome. However, variables such as "Insulin," "Age," and "BloodPressure" do not appear to play a significant role in this predictive model.
+
+These findings provide valuable insights into the factors that may influence the outcome under investigation. Further research and analysis may help refine the model and provide additional insights.
+
 ## Recommendation
 
 Since more than 60% of the population were obese education and lifestyle modification measures should introduced to the community.
 
-More screening measures should be introduced. 
-Gym services and also healthy eating should be adopted.
+More screening measures should be introduced. Gym services and also healthy eating should be adopted.
+
+More exploration of other factors that would have been left out in this research and comparison also with other regions.
