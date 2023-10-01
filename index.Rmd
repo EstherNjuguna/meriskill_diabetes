@@ -26,12 +26,13 @@ The objective is to predict based on diagnostic measurements whether a patient h
 
 Diabetes is a chronic disease that occurs either when the pancrease does not produce enough insulin or when the body cannot use the insulin it produces.
 
-### Types of diabetes: 
+### Types of diabetes:
 
 -   -Type 1 DM - caused by an autoimmune reaction.
     Can be diagnosed at any age but more common in the younger age.
     Symptoms develop rapidly.
-    -
+
+    -   
 
 -   Type II DM - The body fails to produce insulin or cannot utilize the insulin produced.
     It develops gradually over time.
@@ -52,9 +53,9 @@ Diabetes is a chronic disease that occurs either when the pancrease does not pro
 
 -   Premature mortality and increased morbidity.
 
--    Increased financial burden
+-   Increased financial burden
 
-## Epidemiology 
+## Epidemiology
 
 According to WHO, NCDs accounted for 74% of deaths globally of which 1.6 million deaths were diabetes related making it the 9th global mortality cause.
 
@@ -92,6 +93,32 @@ In particular, all patients here are females at least 21 years old of Pima India
 
 -   Outcome: Class variable (0 or 1).
     If patient had diabetes 1 = Yes, 0 = No.
+
+## Problem Statement
+
+1.  What is the distribution of the number of pregnancies among the female Pima Indian patients in the dataset?
+
+2.  How does the distribution of plasma glucose concentration vary among patients with and without diabetes?
+
+3.  Is there a correlation between diastolic blood pressure and the likelihood of diabetes in these patients?
+
+4.  How does the 2-hour serum insulin level differ between patients with and without diabetes?
+
+5.  What is the distribution of BMI (Body Mass Index) among these patients, and does it correlate with the presence of diabetes?
+
+6.  What is the distribution of the diabetes pedigree function scores in the dataset?
+
+7.  How does age vary among patients with diabetes and those without diabetes?
+
+8.  What is the overall prevalence of diabetes (Outcome = 1) among these Pima Indian female patients?
+
+9.  Are there any noticeable trends or patterns in the data that suggest certain factors are more strongly associated with diabetes among this population?
+
+10. Can a predictive model be developed to estimate the likelihood of diabetes based on these features?
+
+11. Are there any relationships or interactions between the variables that are worth exploring, such as age and BMI, or glucose levels and insulin levels?
+
+12. Can insights be gained about the hereditary factors (DiabetesPedigreeFunction) and their impact on diabetes in this population?
 
 ## Understand the data
 
@@ -309,7 +336,7 @@ ggplot(diabetes, aes(BMI)) +
 
 ```
 
-### Diabetes pedigree Function and BMI
+### Diabetes Pedigree Function and BMI
 
 The super Obese, Severe Obese and very severe obese had the highest diabetes pedigree function.
 This in itself is not a good measure since even the underweight still have a high DPF
@@ -455,7 +482,7 @@ ggplot(diabetes, aes(x = Outcome, fill = Outcome)) +
 
 ```
 
-## comparison of age and outcome
+## Comparison of Age and Outcome
 
 ```{r echo=FALSE}
  ggplot(diabetes, aes(x = age_cat, fill = Outcome)) +
@@ -474,7 +501,7 @@ scale_fill_manual(values = c("Yes" = "blue", "No" = "red")) +
   )
 ```
 
-### Blood Pressure comparison
+### Blood Pressure Comparison
 
 The study utilized Diastolic blood pressures that ranges from 60 - 80 mmHg.
 The BPs had a normal distribution though 11.2 % had low diastolic BP(less than 60mmHg).
