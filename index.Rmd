@@ -32,8 +32,6 @@ Diabetes is a chronic disease that occurs either when the pancrease does not pro
     Can be diagnosed at any age but more common in the younger age.
     Symptoms develop rapidly.
 
-    -   
-
 -   Type II DM - The body fails to produce insulin or cannot utilize the insulin produced.
     It develops gradually over time.
     Can be prevented by lifestyle modification -
@@ -269,7 +267,7 @@ ggplot(diabetes, aes(Pregnancies,fill= "blue"))+
 Those who had higher number of pregnancies had a higher chance of being diabetic.
 
 ```{r echo=FALSE}
-ggplot(diabetes, aes(Pregnancies, Outcome))+
+ggplot(diabetes, aes(x = Outcome, y = Pregnancies, group = Outcome))+
 geom_boxplot() +
 labs(
     title = "Comparison of pregnancies and outcome",
@@ -425,14 +423,14 @@ The patient with hyperglycemia or high glucose 2 hours after Oral glucose test h
 Compared to the hypoglycemic who none had diabetes as the outcome.
 
 ```{r echo=FALSE}
-ggplot(diabetes, aes(x = glucose_range, fill = Outcome)) +
+ggplot(diabetes, aes(x = glucose_range, fill = as.factor(Outcome))) +
    geom_bar() +
    labs(
      title = "Glucose Range vs. Outcome",
      x = " ",
      y = " "
    ) +
-  scale_fill_manual(values = c("Yes" = "blue", "No" = "red")) +  
+  scale_fill_manual(values = c("1" = "blue", "0" = "red"))  +  
    theme_minimal()+
    theme(
     panel.grid.major = element_blank(),  # Hide major grid lines
